@@ -2,11 +2,14 @@ from django.db import models
 
 class 도_광역시(models.Model):
     이름 = models.CharField(max_length=40)
-    
+    def __str__(self):
+        return self.이름
 
 class 지역(models.Model):
     이름 = models.CharField(max_length=40)
     도_광역시 = models.ForeignKey(도_광역시, on_delete=models.CASCADE)
+    def __str__(self):
+        return self.이름
     
 class 재활센터(models.Model):
     이름 = models.CharField(max_length=70)
@@ -19,5 +22,6 @@ class 재활센터(models.Model):
     가정방문= models.BooleanField(default=False)
     전화번호= models.CharField(max_length=60)
     지역 = models.ForeignKey(지역, on_delete=models.CASCADE)
-
+    def __str__(self):
+        return self.이름
 

@@ -33,32 +33,19 @@
             <h1>당신 근처의 재활센터</h1>
         </div>
 
-        <div style="padding-top: 30px" class="col-auto">
-            <label for="inputPassword2" class="visually-hidden">검색</label>
-            <input type="password" class="form-control" id="inputPassword2" placeholder="Password">
+        <div style="padding-top: 30px; width: 200px; display: flex; justify-content: center">
+            <input class="form-control" style="" type="search" placeholder="검색" aria-label="Search">
         </div>
 
         <div style="display: flex; justify-content: center;">
 
-        {% for 도 in 도_광역시 %}
-            <p id="city">{{ 도.이름 }}</p>
-        {% endfor %}
-
-        <div>
-            {% for 지 in 지역 %}
-
-            {% if 지.도_광역시 ==  도 %}     
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-                <label class="form=check-label" for="flexCheckDefault">
-                    {{지.이름}}
-                </label>
-            </div>
-            {% endif %}
-
+            {% for 도 in 도_광역시 %}
+                <p value="city" id="{{ 도.이름 }}"><b>{{ 도.이름 }}</b><br></p>
+                <p><br></p>
             {% endfor %}
-        
-        </div>
+                <div class="geo">
+                
+                </div>
 
         </div>
 
@@ -77,17 +64,43 @@
     </div>
 
     <script>
-        $('#city').click(function (event) {
-            let feed_id = event.target.attributes.getNamedItem('feed_id').value;
-            let bookmark_id = event.target.id;
-            let bookmark_text = $.trim($('#' + bookmark_id).html());
-            if (bookmark_text == 'bookmark') {
-                $('#' + bookmark_id).html('bookmark_border');
-            } else {
-                $('#' + bookmark_id).html('bookmark');
+        $(document).ready(function () {
+            $("p[value='city']").click(function () {
+                var city_name = $(this).attr('id');
+                $('.geo').html('');
+                var tag = ""
+                {% for 지 in 지역 %}
+                    if (city_name == '{{지.도_광역시.이름}}') {
+                        tag += "<div value='city2' class='form-check'><input class='form-check-input' type='checkbox' id='" + '{{지.이름}}' + "'><label class='form-check-label' for='" + '{{지.이름}}' + "'>" + '{{지.이름}}' + "</label></div>"
+                    }
+                {% endfor %}
+                $('.geo').append(tag);
+        
+            });     
+        });
+
+        $(document).ready(function () {
+            $("div[class='geo']").click(function (chk) {
+            const checkboxes = document.getElementsByClassName("form-check-input");
+            var city_region = chk.target.id;   
+            for(var i=0; i<checkboxes.length; i++){
+                if(checkboxes[i].id != city_region){    
+                    checkboxes[i].checked = false;
+                }
+                else
+                { checkboxes[i].checked = true }
             }
-    
-        });     
+                 
+            {% for 재활 in 재활센터 %}
+                    if (city_region == '{{재활.지역.이름}}') {
+                        console.log('{{재활.이름}}')
+                    }
+            {% endfor %}
+
+
+
+            });     
+        });
     </script>
 
 
