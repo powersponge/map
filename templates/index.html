@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en">
+<html lang="ko">
+
   <head>
     
     <meta charset="utf-8">
@@ -8,10 +9,12 @@
     <link rel="stylesheet" href="//stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
-    <title>Hello, world!</title>
+    <title>모두의 재활</title>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
 
   </head>
+
+
   <body>
     <div class="container">
         <nav class="navbar">
@@ -43,8 +46,8 @@
                 <p value="city" id="{{ 도.이름 }}"><b>{{ 도.이름 }}</b><br></p>
                 <p><br></p>
             {% endfor %}
+
                 <div class="geo">
-                
                 </div>
 
         </div>
@@ -53,17 +56,24 @@
         
         <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=02a04e2ed99aa6a04210f2253925f429"></script>
         <script>
+            var points = new kakao.maps.LatLng(33.450701, 126.570667);
+            var inforwindows = [];
             var container = document.getElementById('map');
             var options = {
-                center: new kakao.maps.LatLng(33.450701, 126.570667),
+                center: points,
                 level: 3
             };
     
             var map = new kakao.maps.Map(container, options);
+            var markers = [];
+            
         </script>
+
     </div>
 
+
     <script>
+
         $(document).ready(function () {
             $("p[value='city']").click(function () {
                 var city_name = $(this).attr('id');
@@ -79,6 +89,7 @@
             });     
         });
 
+
         $(document).ready(function () {
             $("div[class='geo']").click(function (chk) {
             const checkboxes = document.getElementsByClassName("form-check-input");
@@ -90,22 +101,51 @@
                 else
                 { checkboxes[i].checked = true }
             }
-                 
+
+            for(var i=0; i<markers.length; i++){
+                markers[i].setMap(null);
+            }
+            var a = 0;
+            var bounds = new kakao.maps.LatLngBounds();  
+            var iwContent = '';
+            var infowindow = new kakao.maps.InfoWindow({ position : null, content : null });
+            var marker = new kakao.maps.Marker({});
+            for(var i =0; i<inforwindows.length; i++){
+                inforwindows[i].close(map, markers[i]);}
+
             {% for 재활 in 재활센터 %}
                     if (city_region == '{{재활.지역.이름}}') {
-                        console.log('{{재활.이름}}')
-                    }
+                        iwContent = '<div style="padding:5px; width:150px; height:auto; display:inline-block;">' + '{{ 재활.이름 }}' + ' </div>'
+                        points = new kakao.maps.LatLng('{{재활.위도}}', '{{재활.경도}}');
+                        marker = new kakao.maps.Marker({
+                            map: map,
+                            position: points,
+                            title : '{{재활.이름}}',
+                        });
+                        markers[a] = marker;
+                        bounds.extend(points);
+                        infowindow = new kakao.maps.InfoWindow({
+                            position : points, 
+                            content : iwContent 
+                        });
+                        inforwindows[a] = infowindow;
+                        a++;
+                    }   
+
             {% endfor %}
 
+            for(var i =0; i<inforwindows.length; i++){
+                inforwindows[i].open(map, markers[i]);}
 
-
+            map.setBounds(bounds);
             });     
         });
+  
     </script>
-
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
-
   </body>
+
+
 </html>
