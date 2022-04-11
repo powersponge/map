@@ -7,3 +7,4 @@ def main(request):
 	재활센터s = 재활센터.objects.all()
 	context = {'도_광역시':도_광역시s, '지역':지역s, '재활센터':재활센터s}
 	return render(request, 'index.html', context)
+
